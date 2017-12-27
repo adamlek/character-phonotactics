@@ -6,29 +6,13 @@ Created on Mon Aug 14 17:15:34 2017
 @author: adam
 """
 import networkx as nx
+from toolz import sliding_window
 
+def ch_grams(fl):
+    with open(fl) as f:
+        data = ''.join([x.lower() for x in f.read().split('\n') if x])
+    return list(sliding_window(2,data))
 
-file = '/home/adam/efselab/outp/rodarummet.tok'
-
-G = nx.DiGraph()
-edges = []
-
-def char_grams(file, k):
-    with open(file) as f:
-        for ln in f:
-            charlist = [x.lower() for x in ln.rstrip()]
-            if not charlist:
-                continue
-            for i, w in enumerate(charlist):
-                if not w.isalpha():
-                    continue
-                else:
-                    for n in range(1,k+1):
-                        try:
-                            edges.append((w, charlist[i+n]))
-                        except:
-                            pass
-    return edges
 
 def create_graph(edges):
     for v1, v2 in edges:
@@ -45,5 +29,8 @@ def create_graph(edges):
     nx.write_gexf(G, 'chars.gexf')
 
 if __name__ == '__main__':
-    edges = char_grams(file, 2)
+    fl = '/home/usr1/git/strindberg/data/pos_tagged_text/samlade_verk_06/0_5_6__röda_rummet.tok'
+
+    G = nx.DiGraph()
+    edges = ch_grams(fl)
     create_graph(edges)
